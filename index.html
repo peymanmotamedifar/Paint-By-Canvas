@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Document</title>
+</head>
+<body>
+<!-- **************************** Coding and design by Peyman Motamedifar *************************************
+Website   = peyman-web.ir
+        
+Linkedin  = https://www.linkedin.com/in/peymanmotamedifar/
+        
+Github    = https://github.com/peymanmotamedifar
+        
+Instagram = peyman_web
+        
+Email     = peymanmotamedi.web@gmail.com -->
+
+
+
+    <main>
+        <section>
+          <section>
+            <div class="dr">
+                <span onclick="_pen()"><img src="img/office-material.png" alt=""></span>
+                <span onclick="spray()"><img src="img/paint.png" alt=""></span>
+                <span onclick="rect()"><span class="material-symbols-outlined">
+                    rectangle
+                    </span></span>
+                <span onclick="cir()"><span class="material-symbols-outlined">
+                    circle
+                    </span></span>
+                    <span onclick="era()"><img src="img/eraser.png" alt=""></span>
+                    <span>Size :<input id="ra" type="range" value="4" min="1" max="25"></span>
+               
+            </div>
+          </section>
+                <div id="d1"> 
+                  <canvas id="cnv">
+                  </canvas>
+                  <div>
+                    <span>Color &nbsp;<input id="co" type="color"></span>
+                    <button onclick="_reset()">CLEAR</button>
+                    <button onclick="_download()">Download <span class="material-symbols-outlined">
+                        download
+                        </span></button>
+                  </div>
+                </div>
+        </section>
+      
+    </main>
+
+
+
+
+    <script>
+     
+        let _color
+        let z
+        let x
+        let y
+        let penSize
+        let flag2 =0
+        let flag1 = 0
+        let bd = document.getElementsByTagName('body')
+        let pen = document.getElementById('cnv')
+        let _div = document.getElementById('d1')
+        ctx = pen.getContext('2d')
+        pen.width = pen.offsetWidth
+        pen.height = pen.offsetHeight
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, pen.width, pen.height);
+       function _pen(){
+        flag2 = 1 //active pen
+        
+       }
+       function spray(){
+        flag2 = 2 //active spray
+       }
+       function rect(){
+        flag2 = 3
+       }
+       function cir(){
+        flag2 = 4
+       }
+       function era(){
+        flag2 = 5
+       }
+          
+        window.addEventListener('mousedown' , function(e){
+            flag1 = 1  //mouse down for active drawing
+            ctx.beginPath()
+             penSize = document.getElementById('ra').value
+            ctx.lineWidth = penSize;
+            x = e.offsetX
+            y = e.offsetY
+            z = ctx.getImageData(0,0,pen.width , pen.height)
+            if(flag2==5){
+                _color = 'white'
+            }else{
+                _color = document.getElementById('co').value
+            }
+
+        })  
+        window.addEventListener('mouseup' , function(){
+            flag1 = 0
+        })  
+        pen.addEventListener('mousemove', function(e){
+       
+            
+           if(flag1==0) return;
+           ctx.fillStyle= _color;
+           ctx.strokeStyle= _color;
+           ctx.putImageData(z, 0, 0);
+           if(flag2==1 || flag2==5){
+// ******** start pen ********
+              ctx.lineTo(e.offsetX,(e.offsetY))
+              ctx.stroke()
+           
+           }else if(flag2==2){
+
+//********start spray ********
+    ctx.rect(e.offsetX, e.offsetY, 1, 1);    
+    for (let i = 20; i--;) { 
+    ctx.rect(e.offsetX + Math.random() * (penSize*6) , 
+    e.offsetY + Math.random() * (penSize*6) , 1, 1);
+    ctx.fill();
+    
+    
+            }
+        }else if(flag2==3){
+            ctx.strokeRect(e.offsetX ,e.offsetY , x - e.offsetX , y - e.offsetY)
+        }else if(flag2==4){
+            ctx.beginPath()
+            let r = Math.sqrt(Math.pow((x - e.offsetX), 2) + Math.pow((y - e.offsetY), 2))
+            ctx.arc(x, y, r,0, Math.PI * 2);
+            ctx.stroke()
+        
+            
+        }
+          
+        })
+    
+        function _reset(){
+            ctx.clearRect(0, 0, pen.width, pen.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, pen.width, pen.height);
+            
+        }
+
+        function _download(){
+  
+    let link = document.createElement("a");
+    link.download = `${Date.now()}.jpg`;
+    link.href = pen.toDataURL();
+    link.click();
+
+        }
+    </script>
+</body>
+</html>
